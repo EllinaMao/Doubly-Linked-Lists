@@ -1,102 +1,91 @@
 ﻿#pragma once
 
-#include <iostream>
 #include "Node.h"
 
+template <typename T>
 class List
 {
-
     // Голова.
-    Node* m_head;
+    Node<T>* m_head;
     // Хвост.
-    Node* m_tail;
+    Node<T>* m_tail;
 
     // Количество элементов.
     unsigned int m_size;
 
 public:
-
+    // Конструкторы и деструктор.
     List();
     List(const List& list);
-
     ~List();
 
+    // Оператор присваивания.
     List& operator=(const List& right);
 
-    // Добавление в начало списка.
-    void AddHead(const char data);
+    // Методы добавления.
+    void AddHead(const T& data);
+    void AddTail(const T& data);
 
-    // Добавление в конец списка.
-    void AddTail(const char data);
-
+    // Копирование списка.
     void Assign(const List& list);
 
-    // Вставка элемента в заданную позицию.
-    void Insert(const char data, unsigned int index);
+    // Вставка элемента.
+    void Insert(const T& data, unsigned int index);
 
-    // Получить элемент списка по индексу.
-    Node* NodeAt(unsigned int index) const;
+    // Получение элемента по индексу.
+    Node<T>* NodeAt(unsigned int index) const;
 
-    // Печать списка, начиная с головы.
+    // Печать списка.
     void PrintHead() const;
-
-    // Печать списка, начиная с хвоста.
     void PrintTail() const;
 
-    // Удалить весь список.
+    // Удаление элементов.
     void RemoveAll();
-
-    // Удаление элемента по индексу.
     void RemoveAt(unsigned int index);
-
-    // Удаление головного элемента.
     void RemoveHead();
-
-    // Удаление хвостового элемента.
     void RemoveTail();
 
-    // Получение количества элементов, находящихся в списке.
+    // Получение размера списка.
     unsigned int GetSize() const;
 };
-/*
-#include "List.h"
 
-using namespace std;
+// Реализация методов.
 
-List::List() :  m_head(nullptr), m_tail(nullptr), m_size(0U)
-{
-}
+template <typename T>
+List<T>::List() : m_head(nullptr), m_tail(nullptr), m_size(0U) {}
 
-List::List(const List& list) :  m_head(nullptr),  m_tail(nullptr),  m_size(0U)
+template <typename T>
+List<T>::List(const List& list) : m_head(nullptr), m_tail(nullptr), m_size(0U)
 {
     Assign(list);
 }
 
-List::~List()
+template <typename T>
+List<T>::~List()
 {
     RemoveAll();
 }
 
-List& List::operator=(const List& right)
+template <typename T>
+List<T>& List<T>::operator=(const List& right)
 {
     if (this != &right)
     {
         Assign(right);
     }
-
     return *this;
 }
 
-void List::AddHead(const char data)////Person obj, Point obj, double* arr     'a'
+template <typename T>
+void List<T>::AddHead(const T& data)
 {
-    Node* node = new Node(data);///'a'
+    Node<T>* node = new Node<T>(data);
 
-
-       if (m_size > 0)
+    if (m_size > 0)
     {
-        m_head->m_previous = node;/////  було  m_head   =   'h'  ,  'j'  'k'
-        node->m_next = m_head;/////тут попереднє значення m_head='h'
-        m_head = node;/////перезаписуємо голову списку  стало  m_head   = 'a'  'h'  ,  'j'  'k'
+        m_head->m_previous = node;
+        node->m_next = m_head;
+        m_head = node;
     }
     else
     {
@@ -105,12 +94,12 @@ void List::AddHead(const char data)////Person obj, Point obj, double* arr     'a
     }
 
     ++m_size;
-
 }
 
-void List::AddTail(const char data)
+template <typename T>
+void List<T>::AddTail(const T& data)
 {
-    Node* node = new Node(data);
+    Node<T>* node = new Node<T>(data);
 
     if (m_size > 0U)
     {
@@ -127,26 +116,22 @@ void List::AddTail(const char data)
     ++m_size;
 }
 
-void List::Assign(const List& list)
+template <typename T>
+void List<T>::Assign(const List& list)
 {
     RemoveAll();
 
-    Node* node = list.m_head;
+    Node<T>* node = list.m_head;
 
     while (node != nullptr)
     {
         AddTail(node->m_data);
-
         node = node->m_next;
     }
 }
 
-unsigned int List::GetSize() const
-{
-    return m_size;
-}
-
-void List::Insert(const char data, unsigned int index)
+template <typename T>
+void List<T>::Insert(const T& data, unsigned int index)
 {
     if (index < m_size)
     {
@@ -160,9 +145,9 @@ void List::Insert(const char data, unsigned int index)
         }
         else
         {
-            Node* current = NodeAt(index);
+            Node<T>* current = NodeAt(index);
 
-            Node* node = new Node(data);
+            Node<T>* node = new Node<T>(data);
 
             node->m_previous = current->m_previous;
             node->m_next = current;
@@ -175,9 +160,10 @@ void List::Insert(const char data, unsigned int index)
     }
 }
 
-Node* List::NodeAt(unsigned int index) const
+template <typename T>
+Node<T>* List<T>::NodeAt(unsigned int index) const
 {
-    Node* node = nullptr;
+    Node<T>* node = nullptr;
 
     if (index < m_size)
     {
@@ -187,7 +173,7 @@ Node* List::NodeAt(unsigned int index) const
 
             unsigned int i = 0U;
 
-            while(i < index)
+            while (i < index)
             {
                 node = node->m_next;
                 i++;
@@ -207,40 +193,36 @@ Node* List::NodeAt(unsigned int index) const
         }
     }
 
-
     return node;
 }
 
-void List::PrintHead() const
+template <typename T>
+void List<T>::PrintHead() const
 {
-    Node* current = m_head;
+    Node<T>* current = m_head;
 
     while (current != nullptr)
     {
-        cout << current->m_data;
-
+        // Используем стандартный вывод без std.
+        operator<<(operator<<(operator<<(1, current->m_data), ' '), '\n');
         current = current->m_next;
     }
-
-    cout << endl;
 }
 
-void List::PrintTail() const
+template <typename T>
+void List<T>::PrintTail() const
 {
-    Node* current = m_tail;
-    int ind = m_size - 1;
+    Node<T>* current = m_tail;
+
     while (current != nullptr)
     {
-        cout <<ind<< current->m_data;
-
+        operator<<(operator<<(operator<<(1, current->m_data), ' '), '\n');
         current = current->m_previous;
-        ind--;
     }
-
-    cout << endl;
 }
 
-void List::RemoveAll()
+template <typename T>
+void List<T>::RemoveAll()
 {
     while (m_head != nullptr)
     {
@@ -248,7 +230,8 @@ void List::RemoveAll()
     }
 }
 
-void List::RemoveAt(unsigned int index)
+template <typename T>
+void List<T>::RemoveAt(unsigned int index)
 {
     if (index < m_size)
     {
@@ -256,13 +239,13 @@ void List::RemoveAt(unsigned int index)
         {
             RemoveHead();
         }
-        else if(index == m_size - 1U)
+        else if (index == m_size - 1U)
         {
             RemoveTail();
         }
         else
         {
-            Node* removeElement = NodeAt(index);
+            Node<T>* removeElement = NodeAt(index);
 
             removeElement->m_previous->m_next = removeElement->m_next;
             removeElement->m_next->m_previous = removeElement->m_previous;
@@ -274,11 +257,12 @@ void List::RemoveAt(unsigned int index)
     }
 }
 
-void List::RemoveHead()
+template <typename T>
+void List<T>::RemoveHead()
 {
     if (m_head != nullptr)
     {
-        Node* temp = m_head;
+        Node<T>* temp = m_head;
 
         m_head = m_head->m_next;
 
@@ -297,11 +281,12 @@ void List::RemoveHead()
     }
 }
 
-void List::RemoveTail()
+template <typename T>
+void List<T>::RemoveTail()
 {
     if (m_tail != nullptr)
     {
-        Node* node = m_tail;
+        Node<T>* node = m_tail;
 
         m_tail = m_tail->m_previous;
 
@@ -318,4 +303,10 @@ void List::RemoveTail()
 
         --m_size;
     }
-}*/
+}
+
+template <typename T>
+unsigned int List<T>::GetSize() const
+{
+    return m_size;
+}
