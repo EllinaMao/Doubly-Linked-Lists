@@ -1,15 +1,18 @@
 ﻿#pragma once
 
+template <typename T>
 class Node
 {
-public:// Данные.
-	char m_data;
+public:
+    // Данные.
+    T m_data;
 
     // Адрес следующего элемента списка.
-	Node* m_next;
+    Node* m_next;
 
     // Адрес предыдущего элемента списка.
     Node* m_previous;
 
-    Node(const char data);
+    // Конструктор.
+    Node(const T& data) : m_data(data), m_next(nullptr), m_previous(nullptr) {}
 };
