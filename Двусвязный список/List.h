@@ -1,7 +1,28 @@
 ﻿#pragma once
 
 #include "Node.h"
+#include <iostream>
+using namespace std;
+/*
+Задание 1
+Создайте шаблонный класс двусвязного списка для работы с целыми значениями. Требуется создать реализации для типичных операций над элементами:
++1.	AddToHead – добавление элемента в голову.
++2.	AddToTail – добавление элемента в хвост.
++3.	DeleteFromHead – удаление элемента из головы.
++4.	DeleteFromTail – удаление элемента из хвоста.
++5.	DeleteAll – удаление всех элементов.
++6.	Show – отображение всех элементов списка на экран.
+(    void PrintHead() const;
+    void PrintTail() const;)
 
+Задание 2
+Добавить в класс из задания 1 следующие функции: 
++1. вставка элемента в заданную позицию, (Insert)
++2. удаление элемента по заданной позиции, (RemoveAt)
++3. поиск заданного элемента (функция возвращает позицию найденного элемента в случае успеха или NULL в случае неудачи), Find;
++4. переворот списка. Reverse;
+
+*/
 template <typename T>
 class List
 {
@@ -23,8 +44,8 @@ public:
     List& operator=(const List& right);
 
     // Методы добавления.
-    void AddHead(const T& data);
-    void AddTail(const T& data);
+    void AddToHead(const T& data);
+    void AddToTail(const T& data);
 
     // Копирование списка.
     void Assign(const List& list);
@@ -40,13 +61,17 @@ public:
     void PrintTail() const;
 
     // Удаление элементов.
-    void RemoveAll();
+    void DeleteAll();
     void RemoveAt(unsigned int index);
-    void RemoveHead();
-    void RemoveTail();
+    void DeleteFromHead();
+    void DeleteFromTail();
 
     // Получение размера списка.
     unsigned int GetSize() const;
+
+    int Find(const T data) const;
+    void Reverse();
+
 };
 
 // Реализация методов.
@@ -63,7 +88,7 @@ List<T>::List(const List& list) : m_head(nullptr), m_tail(nullptr), m_size(0U)
 template <typename T>
 List<T>::~List()
 {
-    RemoveAll();
+    DeleteAll();
 }
 
 template <typename T>
@@ -77,7 +102,7 @@ List<T>& List<T>::operator=(const List& right)
 }
 
 template <typename T>
-void List<T>::AddHead(const T& data)
+void List<T>::AddToHead(const T& data)
 {
     Node<T>* node = new Node<T>(data);
 
@@ -97,7 +122,7 @@ void List<T>::AddHead(const T& data)
 }
 
 template <typename T>
-void List<T>::AddTail(const T& data)
+void List<T>::AddToTail(const T& data)
 {
     Node<T>* node = new Node<T>(data);
 
@@ -119,13 +144,13 @@ void List<T>::AddTail(const T& data)
 template <typename T>
 void List<T>::Assign(const List& list)
 {
-    RemoveAll();
+    DeleteAll();
 
     Node<T>* node = list.m_head;
 
     while (node != nullptr)
     {
-        AddTail(node->m_data);
+        AddToTail(node->m_data);
         node = node->m_next;
     }
 }
@@ -137,11 +162,11 @@ void List<T>::Insert(const T& data, unsigned int index)
     {
         if (index == 0U)
         {
-            AddHead(data);
+            AddToHead(data);
         }
         else if (index == m_size - 1U)
         {
-            AddTail(data);
+            AddToTail(data);
         }
         else
         {
@@ -193,7 +218,7 @@ Node<T>* List<T>::NodeAt(unsigned int index) const
         }
     }
 
-    return node;
+    return node;    
 }
 
 template <typename T>
@@ -203,30 +228,36 @@ void List<T>::PrintHead() const
 
     while (current != nullptr)
     {
-        // Используем стандартный вывод без std.
-        operator<<(operator<<(operator<<(1, current->m_data), ' '), '\n');
+        cout << current->m_data;
+
         current = current->m_next;
     }
+
+    cout << endl;
 }
 
 template <typename T>
 void List<T>::PrintTail() const
 {
     Node<T>* current = m_tail;
-
+    int ind = m_size - 1;
     while (current != nullptr)
     {
-        operator<<(operator<<(operator<<(1, current->m_data), ' '), '\n');
+        cout << current->m_data;
+
         current = current->m_previous;
-    }
+        ind--;
+}
+
+cout << endl;
 }
 
 template <typename T>
-void List<T>::RemoveAll()
+void List<T>::DeleteAll()
 {
     while (m_head != nullptr)
     {
-        RemoveHead();
+        DeleteFromHead();
     }
 }
 
@@ -237,11 +268,11 @@ void List<T>::RemoveAt(unsigned int index)
     {
         if (index == 0U)
         {
-            RemoveHead();
+            DeleteFromHead();
         }
         else if (index == m_size - 1U)
         {
-            RemoveTail();
+            DeleteFromTail();
         }
         else
         {
@@ -258,7 +289,7 @@ void List<T>::RemoveAt(unsigned int index)
 }
 
 template <typename T>
-void List<T>::RemoveHead()
+void List<T>::DeleteFromHead()
 {
     if (m_head != nullptr)
     {
@@ -282,7 +313,7 @@ void List<T>::RemoveHead()
 }
 
 template <typename T>
-void List<T>::RemoveTail()
+void List<T>::DeleteFromTail()
 {
     if (m_tail != nullptr)
     {
@@ -309,4 +340,62 @@ template <typename T>
 unsigned int List<T>::GetSize() const
 {
     return m_size;
+}
+
+template<typename T>
+inline int List<T>::Find(const T data) const
+{
+    Node<T>* forward = m_head;  // Указатель для движения от головы
+    Node<T>* backward = m_tail; // Указатель для движения от хвоста
+    int forwardPosition = 0;    // Позиция при движении от головы
+    int backwardPosition = m_size - 1; // Позиция при движении от хвоста
+
+    while (forward != nullptr && backward != nullptr && forwardPosition <= backwardPosition)
+    {
+        // Проверяем узел при движении от головы
+        if (forward->m_data == data)
+        {
+            return forwardPosition;
+        }   
+
+        // Проверяем узел при движении от хвоста
+        if (backward->m_data == data)
+        {
+            return backwardPosition;
+        }
+
+        // Двигаемся вперед и назад
+        forward = forward->m_next;
+        backward = backward->m_previous;
+        ++forwardPosition;
+        --backwardPosition;
+    }
+
+    // Если элемент не найден, возвращаем -1
+    return -1;
+}
+
+
+template<typename T>
+inline void List<T>::Reverse()
+{
+    if (m_head == nullptr) // Если список пустой, ничего не делаем
+        return;
+
+    Node<T>* current = m_head;
+    Node<T>* temp = nullptr;
+
+
+    while (current != nullptr)
+    {
+        temp = current->m_previous;
+        current->m_previous = current->m_next;
+        current->m_next = temp;
+        current = current->m_previous;// Переход к следующему узлу
+    }
+
+
+    temp = m_head;
+    m_head = m_tail;
+    m_tail = temp;
 }
